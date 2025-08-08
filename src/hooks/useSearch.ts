@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { searchAPI } from '@/lib/neoApi';
 import type { Movie } from '@/lib/neoApi';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export function useSearch() {
@@ -14,7 +13,6 @@ export function useSearch() {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentQuery, setCurrentQuery] = useState('');
   const [searchFailed, setSearchFailed] = useState(false);
-  const { data: session } = useSession();
   const router = useRouter();
 
   const filterMovies = (movies: Movie[]) => {
@@ -79,7 +77,7 @@ export function useSearch() {
       
       setResults(prev => [...prev, ...filteredMovies]);
       setCurrentPage(nextPage);
-      setHasMore(nextPage < response.data.total_pages && nextPage < 5); // Ограничиваем до 5 страниц
+      setHasMore(nextPage < response.data.total_pages && nextPage < 5);
     } catch (err) {
       console.error('Ошибка при загрузке дополнительных результатов:', err);
       setError('Произошла ошибка при загрузке дополнительных результатов');

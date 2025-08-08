@@ -1,26 +1,27 @@
 "use client";
 
 import { useState } from 'react';
-import { signIn, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export function useUser() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
 
   const loginWithGoogle = async () => {
     setLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/' });
+      // handled via redirect button in UI
     } finally {
       setLoading(false);
     }
   };
 
   const logout = async () => {
-    await signOut({ callbackUrl: '/login' });
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    router.push('/login');
   };
 
-  return { session, loading, loginWithGoogle, logout };
+  return { loading, loginWithGoogle, logout };
 }
