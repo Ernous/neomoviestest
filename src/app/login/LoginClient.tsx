@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { signIn } from 'next-auth/react';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.neomovies.ru';
 
 export default function LoginClient() {
   const [isLogin, setIsLogin] = useState(true);
@@ -39,6 +40,10 @@ export default function LoginClient() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogle = () => {
+    window.location.href = `${API_BASE}/api/v1/auth/google/login`;
   };
 
   return (
@@ -100,7 +105,7 @@ export default function LoginClient() {
 
         <button
           type="button"
-          onClick={() => signIn('google', { callbackUrl: '/' })}
+          onClick={handleGoogle}
           className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-warm-200 dark:border-warm-700 rounded-lg bg-white dark:bg-warm-800 hover:bg-warm-100 dark:hover:bg-warm-700 text-warm-900 dark:text-warm-50 transition-colors"
         >
           <Image src="/google.svg" alt="Google" width={20} height={20} />
