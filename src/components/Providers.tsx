@@ -2,6 +2,12 @@
 
 import { ThemeProvider } from 'styled-components';
 import { theme } from '@/styles/theme';
+import { SessionProvider } from 'next-auth/react';
+
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  return (
+    <SessionProvider>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    </SessionProvider>
+  );
 }

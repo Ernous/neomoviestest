@@ -1,10 +1,15 @@
 import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import { User } from '@/models';
 import { connectDB } from './db';
 
 export const authOptions: AuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
     CredentialsProvider({
       id: 'credentials',
       name: 'Credentials',
@@ -37,24 +42,28 @@ export const authOptions: AuthOptions = {
           id: user._id.toString(),
           email: user.email,
           isAdmin: user.isAdmin,
-        };
+        } as any;
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, profile }) {
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.isAdmin = user.isAdmin;
+        token.id = (user as any).id;
+        token.email = (user as any).email;
+        token.isAdmin = (user as any).isAdmin;
+      }
+      // When signing in with Google, ensure token fields exist
+      if (account?.provider === 'google') {
+        token.email = token.email || (profile as any)?.email;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
+        (session.user as any).id = token.id as string;
         session.user.email = token.email as string;
-        session.user.isAdmin = token.isAdmin as boolean;
+        (session.user as any).isAdmin = (token as any).isAdmin as boolean;
       }
       return session;
     },
@@ -64,7 +73,7 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 дней
+    maxAge: 30 * 24 * 60 * 60,
   },
 };
 

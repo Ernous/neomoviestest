@@ -1,11 +1,10 @@
-'use client';
+import type { Metadata } from 'next';
+import LoginClient from './LoginClient';
 
-import dynamic from 'next/dynamic';
+export const metadata: Metadata = {
+  title: 'Вход — Neo Movies',
+};
 
-const LoginClient = dynamic(() => import('./LoginClient'), {
-  ssr: false
-});
-
-export default function LoginPage() {
+export default function Page() {
   return <LoginClient />;
 }
