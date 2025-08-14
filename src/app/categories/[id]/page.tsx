@@ -6,7 +6,36 @@ import { categoriesAPI, Movie } from '@/lib/neoApi';
 import MovieCard from '@/components/MovieCard';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 
-type MediaType = 'movies' | 'tv';
+// Маппинг ID категорий к их названиям (так как нет эндпоинта getCategory)
+const categoryNames: Record<number, string> = {
+  12: 'приключения',
+  10751: 'семейный',
+  10752: 'военный',
+  10762: 'Детский',
+  10764: 'Реалити-шоу',
+  10749: 'мелодрама',
+  28: 'боевик',
+  80: 'криминал',
+  18: 'драма',
+  14: 'фэнтези',
+  27: 'ужасы',
+  10402: 'музыка',
+  10770: 'телевизионный фильм',
+  16: 'мультфильм',
+  99: 'документальный',
+  878: 'фантастика',
+  37: 'вестерн',
+  10765: 'НФ и Фэнтези',
+  10767: 'Ток-шоу',
+  10768: 'Война и Политика',
+  9648: 'детектив',
+  35: 'комедия',
+  36: 'история',
+  53: 'триллер',
+  10759: 'Боевик и Приключения',
+  10763: 'Новости',
+  10766: 'Мыльная опера'
+};
 
 function CategoryPage() {
   const params = useParams();
@@ -14,27 +43,18 @@ function CategoryPage() {
   const categoryId = parseInt(params.id as string);
 
   const [categoryName, setCategoryName] = useState<string>('');
-  const [mediaType, setMediaType] = useState<MediaType>('movies');
-  const [items, setItems] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [moviesAvailable, setMoviesAvailable] = useState(true);
-  const [tvShowsAvailable, setTvShowsAvailable] = useState(true);
 
   useEffect(() => {
-    async function fetchCategoryName() {
-      try {
-        const response = await categoriesAPI.getCategory(categoryId);
-        setCategoryName(response.data.name);
-      } catch (error) {
-        console.error('Error fetching category:', error);
-        setError('Не удалось загрузить информацию о категории');
-      }
-    }
-    if (categoryId) {
-      fetchCategoryName();
+    // Устанавливаем название категории из локального маппинга
+    if (categoryId && categoryNames[categoryId]) {
+      setCategoryName(categoryNames[categoryId]);
+    } else {
+      setCategoryName('Неизвестная категория');
     }
   }, [categoryId]);
 
@@ -46,47 +66,18 @@ function CategoryPage() {
       setError(null);
 
       try {
-        let response;
-        if (mediaType === 'movies') {
-          response = await categoriesAPI.getMoviesByCategory(categoryId, page);
-          const hasMovies = response.data.results.length > 0;
-          if (page === 1) setMoviesAvailable(hasMovies);
-          setItems(response.data.results);
-          setTotalPages(response.data.total_pages);
-          if (!hasMovies && tvShowsAvailable && page === 1) {
-            setMediaType('tv');
-          }
-        } else {
-          response = await categoriesAPI.getTVShowsByCategory(categoryId, page);
-          const hasTvShows = response.data.results.length > 0;
-          if (page === 1) setTvShowsAvailable(hasTvShows);
-          const transformedShows = response.data.results.map((show: any) => ({
-            ...show,
-            title: show.name || show.title,
-            release_date: show.first_air_date || show.release_date,
-          }));
-          setItems(transformedShows);
-          setTotalPages(response.data.total_pages);
-          if (!hasTvShows && moviesAvailable && page === 1) {
-            setMediaType('movies');
-          }
-        }
+        const response = await categoriesAPI.getMoviesByCategory(categoryId, page);
+        setMovies(response.data.results);
+        setTotalPages(response.data.total_pages);
       } catch (err) {
-        setError('Ошибка при загрузке данных');
+        setError('Ошибка при загрузке фильмов');
         console.error(err);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, [categoryId, mediaType, page, moviesAvailable, tvShowsAvailable]);
-
-  const handleMediaTypeChange = (type: MediaType) => {
-    if (type === 'movies' && !moviesAvailable) return;
-    if (type === 'tv' && !tvShowsAvailable) return;
-    setMediaType(type);
-    setPage(1);
-  };
+  }, [categoryId, page]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -182,26 +173,9 @@ function CategoryPage() {
         Назад к категориям
       </button>
       
-      <h1 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">
-        {categoryName || 'Загрузка...'}
+      <h1 className="text-3xl md:text-4xl font-bold mb-6 text-foreground capitalize">
+        {categoryName}
       </h1>
-      
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
-        <button 
-          onClick={() => handleMediaTypeChange('movies')}
-          disabled={!moviesAvailable || mediaType === 'movies'}
-          className={`px-6 py-2 rounded-md text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${mediaType === 'movies' ? 'bg-accent text-white' : 'bg-card hover:bg-card/80 text-foreground'}`}
-        >
-          Фильмы
-        </button>
-        <button 
-          onClick={() => handleMediaTypeChange('tv')}
-          disabled={!tvShowsAvailable || mediaType === 'tv'}
-          className={`px-6 py-2 rounded-md text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${mediaType === 'tv' ? 'bg-accent text-white' : 'bg-card hover:bg-card/80 text-foreground'}`}
-        >
-          Сериалы
-        </button>
-      </div>
       
       {loading ? (
         <div className="flex justify-center items-center min-h-[40vh]">
@@ -209,18 +183,18 @@ function CategoryPage() {
         </div>
       ) : (
         <>
-          {items.length > 0 ? (
+          {movies.length > 0 ? (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6">
-              {items.map(item => (
+              {movies.map(movie => (
                 <MovieCard
-                  key={`${mediaType}-${item.id}-${page}`}
-                  movie={item}
+                  key={`movie-${movie.id}-${page}`}
+                  movie={movie}
                 />
               ))}
             </div>
           ) : (
             <div className="text-center py-16 text-muted-foreground">
-              <p>Нет {mediaType === 'movies' ? 'фильмов' : 'сериалов'} в этой категории.</p>
+              <p>Нет фильмов в этой категории.</p>
             </div>
           )}
           
