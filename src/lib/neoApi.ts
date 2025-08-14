@@ -76,6 +76,12 @@ export interface Genre {
   name: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export interface Movie {
   id: number;
   title: string;
@@ -348,24 +354,12 @@ export const torrentsAPI = {
 export const categoriesAPI = {
   // Получение всех категорий
   getCategories() {
-    return neoApi.get<{ categories: Category[] }>('/api/v1/categories');
-  },
-
-  // Получение категории по ID
-  getCategory(id: number) {
-    return neoApi.get<Category>(`/api/v1/categories/${id}`);
+    return neoApi.get<Category[]>('/api/v1/categories');
   },
 
   // Получение фильмов по категории
   getMoviesByCategory(categoryId: number, page = 1) {
     return neoApi.get<MovieResponse>(`/api/v1/categories/${categoryId}/movies`, {
-      params: { page }
-    });
-  },
-
-  // Получение сериалов по категории
-  getTVShowsByCategory(categoryId: number, page = 1) {
-    return neoApi.get<MovieResponse>(`/api/v1/categories/${categoryId}/tv`, {
       params: { page }
     });
   }

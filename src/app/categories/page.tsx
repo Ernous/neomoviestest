@@ -21,14 +21,14 @@ function CategoriesPage() {
       try {
         const categoriesResponse = await categoriesAPI.getCategories();
         
-        if (!categoriesResponse.data.categories || categoriesResponse.data.categories.length === 0) {
+        if (!categoriesResponse.data || categoriesResponse.data.length === 0) {
           setError('Не удалось загрузить категории');
           setLoading(false);
           return;
         }
         
         const categoriesWithBackgrounds: CategoryWithBackground[] = await Promise.all(
-          categoriesResponse.data.categories.map(async (category: Category) => {
+          categoriesResponse.data.map(async (category: Category) => {
             try {
               const moviesResponse = await categoriesAPI.getMoviesByCategory(category.id, 1);
               
@@ -40,18 +40,6 @@ function CategoriesPage() {
                   ...category,
                   backgroundUrl
                 };
-              } else {
-                const tvResponse = await categoriesAPI.getTVShowsByCategory(category.id, 1);
-                
-                if (tvResponse.data.results && tvResponse.data.results.length > 0) {
-                  const backgroundUrl = tvResponse.data.results[0].backdrop_path || 
-                                      tvResponse.data.results[0].poster_path;
-                  
-                  return {
-                    ...category,
-                    backgroundUrl
-                  };
-                }
               }
               
               return {

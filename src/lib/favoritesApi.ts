@@ -7,18 +7,12 @@ export const favoritesAPI = {
   },
 
   // Добавление в избранное
-  addFavorite(data: { mediaId: string; mediaType: string; title: string; posterPath?: string }) {
-    const { mediaId, mediaType, ...rest } = data;
-    return neoApi.post(`/api/v1/favorites/${mediaId}?mediaType=${mediaType}`, rest);
+  addFavorite(mediaId: string) {
+    return neoApi.post(`/api/v1/favorites/${mediaId}`);
   },
 
   // Удаление из избранного
   removeFavorite(mediaId: string) {
     return neoApi.delete(`/api/v1/favorites/${mediaId}`);
-  },
-
-  // Проверка, добавлен ли в избранное
-  checkFavorite(mediaId: string) {
-    return neoApi.get(`/api/v1/favorites/check/${mediaId}`);
   }
 };
