@@ -82,7 +82,7 @@ class _ReactionsState extends State<Reactions> {
   @override
   Widget build(BuildContext context) {
     final Color activeColor = Theme.of(context).colorScheme.primary;
-    final Color inactive = Theme.of(context).brightness == Brightness.dark ? const Color(0xFF9CA3AF) : const Color(0xFF9CA3AF);
+    final Color inactiveColor = Theme.of(context).brightness == Brightness.dark ? const Color(0xFF9CA3AF) : const Color(0xFF9CA3AF);
     return _loading && _counts.isEmpty
         ? const Text('Загрузка реакций...')
         : Row(
@@ -94,7 +94,7 @@ class _ReactionsState extends State<Reactions> {
                 count: _counts['like'] ?? 0,
                 active: _userReaction == 'like',
                 activeColor: activeColor,
-                inactiveColor: inactive,
+                inactiveColor: inactiveColor,
                 onTap: () => _toggle('like'),
               ),
               const SizedBox(width: 12),
@@ -104,7 +104,7 @@ class _ReactionsState extends State<Reactions> {
                 count: _counts['dislike'] ?? 0,
                 active: _userReaction == 'dislike',
                 activeColor: activeColor,
-                inactiveColor: inactive,
+                inactiveColor: inactiveColor,
                 onTap: () => _toggle('dislike'),
               ),
             ],
@@ -146,11 +146,11 @@ class _ReactionButton extends StatelessWidget {
               color: active ? activeColor.withOpacity(0.3) : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: active ? activeColor : inactive),
+            child: Icon(icon, color: active ? activeColor : inactiveColor),
           ),
         ),
         const SizedBox(height: 4),
-        Text('$count', style: TextStyle(fontSize: 12, color: inactive)),
+        Text('$count', style: TextStyle(fontSize: 12, color: inactiveColor)),
       ],
     );
   }

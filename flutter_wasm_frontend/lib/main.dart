@@ -10,6 +10,8 @@ import 'package:flutter_wasm_frontend/pages/settings_page.dart';
 import 'package:flutter_wasm_frontend/pages/categories_page.dart';
 import 'package:flutter_wasm_frontend/pages/terms_page.dart';
 import 'package:flutter_wasm_frontend/pages/profile_page.dart';
+import 'package:flutter_wasm_frontend/pages/tv_page.dart';
+import 'package:flutter_wasm_frontend/pages/tv_detail_page.dart';
 
 void main() {
   usePathUrlStrategy();
@@ -29,19 +31,19 @@ class WasmApp extends StatelessWidget {
         GoRoute(path: '/admin', builder: (context, state) => const _SimplePage(title: 'Admin')),
         GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
         GoRoute(path: '/search', builder: (context, state) => const SearchPage()),
-        GoRoute(path: '/favorites', builder: (context, state) => const _SimplePage(title: 'Favorites')),
         GoRoute(path: '/favorites', builder: (context, state) => const FavoritesPage()),
         GoRoute(path: '/providers', builder: (context, state) => const _SimplePage(title: 'Providers')),
         GoRoute(path: '/profile', builder: (context, state) => const ProfilePage()),
         GoRoute(path: '/categories', builder: (context, state) => const CategoriesPage()),
         GoRoute(path: '/terms', builder: (context, state) => const TermsPage()),
+        GoRoute(path: '/tv', builder: (context, state) => const TVPage()),
         GoRoute(
           path: '/movie/:id',
           builder: (context, state) => MovieDetailPage(id: state.pathParameters['id'] ?? ''),
         ),
         GoRoute(
           path: '/tv/:id',
-          builder: (context, state) => _DetailsPage(title: 'TV', id: state.pathParameters['id'] ?? ''),
+          builder: (context, state) => TVDetailPage(id: state.pathParameters['id'] ?? ''),
         ),
       ],
       errorBuilder: (context, state) => const _SimplePage(title: 'Not Found'),
@@ -70,23 +72,6 @@ class _SimplePage extends StatelessWidget {
       appBar: AppBar(title: Text(title)),
       body: Center(
         child: Text(title, style: const TextStyle(fontSize: 22)),
-      ),
-    );
-  }
-}
-
-class _DetailsPage extends StatelessWidget {
-  const _DetailsPage({required this.title, required this.id});
-
-  final String title;
-  final String id;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('$title • $id')),
-      body: Center(
-        child: Text('$title details for id: $id', style: const TextStyle(fontSize: 22)),
       ),
     );
   }

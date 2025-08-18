@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wasm_frontend/api/api_client.dart';
 import 'package:flutter_wasm_frontend/api/neo_api.dart';
-import 'package:flutter_wasm_frontend/widgets/favorite_button.dart';
+import 'package:flutter_wasm_frontend/widgets/header_bar.dart';
 import 'package:flutter_wasm_frontend/widgets/reactions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MovieDetailPage extends StatefulWidget {
-  const MovieDetailPage({super.key, required this.id});
+class TVDetailPage extends StatefulWidget {
+  const TVDetailPage({super.key, required this.id});
 
   final String id;
 
   @override
-  State<MovieDetailPage> createState() => _MovieDetailPageState();
+  State<TVDetailPage> createState() => _TVDetailPageState();
 }
 
-class _MovieDetailPageState extends State<MovieDetailPage> {
+class _TVDetailPageState extends State<TVDetailPage> {
   late final NeoApi _api;
   Map<String, dynamic>? _details;
   bool _loading = true;
@@ -35,7 +35,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       _error = null;
     });
     try {
-      final data = await _api.movieDetails(widget.id);
+      final data = await _api.tvDetails(widget.id);
       _details = data;
       _imdbId = (data['imdb_id'] as String?) ?? '';
       final String base = const String.fromEnvironment('API_BASE_URL', defaultValue: 'https://api.neomovies.ru');
@@ -53,7 +53,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Фильм ${widget.id}')),
+      appBar: const HeaderBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _loading
@@ -85,7 +85,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _details?['title']?.toString() ?? 'Без названия',
+                                    _details?['name']?.toString() ?? 'Без названия',
                                     style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                                   ),
                                   if (_details?['tagline'] != null) ...[
@@ -103,9 +103,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                     children: [
                                       Text('Рейтинг: ${_details?['vote_average']?.toStringAsFixed(1) ?? '0.0'}'),
                                       const SizedBox(width: 16),
-                                      Text('Длительность: ${_details?['runtime'] ?? 0} мин'),
+                                      Text('Сезонов: ${_details?['number_of_seasons'] ?? 0}'),
                                       const SizedBox(width: 16),
-                                      Text(_details?['release_date']?.toString() ?? 'Без даты'),
+                                      Text(_details?['first_air_date']?.toString() ?? 'Без даты'),
                                     ],
                                   ),
                                   const SizedBox(height: 16),
@@ -116,34 +116,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                     ),
                                     const SizedBox(height: 16),
                                   ],
-                                  Row(
-                                    children: [
-                                      if (_playerUrl != null) ...[
-                                        ElevatedButton.icon(
-                                          onPressed: () async {
-                                            await launchUrl(_playerUrl!, mode: LaunchMode.externalApplication);
-                                          },
-                                          icon: const Icon(Icons.play_circle),
-                                          label: const Text('Смотреть'),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red,
-                                            foregroundColor: Colors.white,
-                                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                      ],
-                                      FavoriteButton(
-                                        mediaId: widget.id,
-                                        mediaType: 'movie',
-                                        title: _details?['title']?.toString() ?? '',
-                                        posterPath: _details?['poster_path']?.toString(),
-                                        showText: true,
+                                  if (_playerUrl != null) ...[
+                                    ElevatedButton.icon(
+                                      onPressed: () async {
+                                        await launchUrl(_playerUrl!, mode: LaunchMode.externalApplication);
+                                      },
+                                      icon: const Icon(Icons.play_circle),
+                                      label: const Text('Смотреть'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Reactions(mediaId: widget.id, mediaType: 'movie'),
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
+                                  Reactions(mediaId: widget.id, mediaType: 'tv'),
                                 ],
                               ),
                             ),
@@ -156,4 +144,3 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 }
-
