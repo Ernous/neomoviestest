@@ -16,7 +16,7 @@ class Reactions extends StatefulWidget {
 class _ReactionsState extends State<Reactions> {
   late final ReactionsApi _api;
   Map<String, int> _counts = const <String, int>{};
-  String? _userReaction; // 'like' | 'dislike'
+  String? _userReaction; // 'fire', 'nice', 'think', 'bore', 'shit'
   bool _loading = true;
 
   @override
@@ -83,29 +83,57 @@ class _ReactionsState extends State<Reactions> {
   Widget build(BuildContext context) {
     final Color activeColor = Theme.of(context).colorScheme.primary;
     final Color inactiveColor = Theme.of(context).brightness == Brightness.dark ? const Color(0xFF9CA3AF) : const Color(0xFF9CA3AF);
+    
     return _loading && _counts.isEmpty
         ? const Text('Загрузка реакций...')
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+        : Wrap(
+            spacing: 16,
+            runSpacing: 8,
             children: [
               _ReactionButton(
-                label: 'Нравится',
-                icon: Icons.thumb_up,
-                count: _counts['like'] ?? 0,
-                active: _userReaction == 'like',
+                type: 'fire',
+                icon: Icons.local_fire_department,
+                count: _counts['fire'] ?? 0,
+                active: _userReaction == 'fire',
                 activeColor: activeColor,
                 inactiveColor: inactiveColor,
-                onTap: () => _toggle('like'),
+                onTap: () => _toggle('fire'),
               ),
-              const SizedBox(width: 12),
               _ReactionButton(
-                label: 'Не нравится',
-                icon: Icons.thumb_down,
-                count: _counts['dislike'] ?? 0,
-                active: _userReaction == 'dislike',
+                type: 'nice',
+                icon: Icons.thumb_up,
+                count: _counts['nice'] ?? 0,
+                active: _userReaction == 'nice',
                 activeColor: activeColor,
                 inactiveColor: inactiveColor,
-                onTap: () => _toggle('dislike'),
+                onTap: () => _toggle('nice'),
+              ),
+              _ReactionButton(
+                type: 'think',
+                icon: Icons.psychology,
+                count: _counts['think'] ?? 0,
+                active: _userReaction == 'think',
+                activeColor: activeColor,
+                inactiveColor: inactiveColor,
+                onTap: () => _toggle('think'),
+              ),
+              _ReactionButton(
+                type: 'bore',
+                icon: Icons.sentiment_neutral,
+                count: _counts['bore'] ?? 0,
+                active: _userReaction == 'bore',
+                activeColor: activeColor,
+                inactiveColor: inactiveColor,
+                onTap: () => _toggle('bore'),
+              ),
+              _ReactionButton(
+                type: 'shit',
+                icon: Icons.thumb_down,
+                count: _counts['shit'] ?? 0,
+                active: _userReaction == 'shit',
+                activeColor: activeColor,
+                inactiveColor: inactiveColor,
+                onTap: () => _toggle('shit'),
               ),
             ],
           );
@@ -114,7 +142,7 @@ class _ReactionsState extends State<Reactions> {
 
 class _ReactionButton extends StatelessWidget {
   const _ReactionButton({
-    required this.label,
+    required this.type,
     required this.icon,
     required this.count,
     required this.active,
@@ -123,7 +151,7 @@ class _ReactionButton extends StatelessWidget {
     required this.onTap,
   });
 
-  final String label;
+  final String type;
   final IconData icon;
   final int count;
   final bool active;
@@ -138,15 +166,20 @@ class _ReactionButton extends StatelessWidget {
         InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             width: 64,
-            height: 44,
+            height: 48,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: active ? activeColor.withOpacity(0.3) : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: active ? activeColor : inactiveColor),
+            child: Icon(
+              icon, 
+              color: active ? activeColor : inactiveColor,
+              size: 24,
+            ),
           ),
         ),
         const SizedBox(height: 4),
