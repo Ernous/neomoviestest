@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_wasm_frontend/api/api_client.dart';
 import 'package:flutter_wasm_frontend/models/movie.dart';
+import 'package:flutter_wasm_frontend/models/category.dart';
 
 class NeoApi {
   NeoApi(this._client);
@@ -51,6 +52,50 @@ class NeoApi {
 
   Future<MovieResponse> multiSearch(String query, {int page = 1}) async {
     final res = await _client.get('/search/multi', query: {'query': query, 'page': page});
+    return MovieResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
+  // TV Shows
+  Future<MovieResponse> tvPopular({int page = 1}) async {
+    final res = await _client.get('/api/v1/tv/popular', query: {'page': page});
+    return MovieResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
+  Future<MovieResponse> tvTopRated({int page = 1}) async {
+    final res = await _client.get('/api/v1/tv/top-rated', query: {'page': page});
+    return MovieResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
+  Future<MovieResponse> tvOnTheAir({int page = 1}) async {
+    final res = await _client.get('/api/v1/tv/on-the-air', query: {'page': page});
+    return MovieResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
+  Future<MovieResponse> tvAiringToday({int page = 1}) async {
+    final res = await _client.get('/api/v1/tv/airing-today', query: {'page': page});
+    return MovieResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
+  Future<Map<String, dynamic>> tvDetails(String id) async {
+    final res = await _client.get('/api/v1/tv/$id');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  // Categories
+  Future<List<CategoryModel>> getCategories() async {
+    final res = await _client.get('/api/v1/categories');
+    final Map<String, dynamic> data = jsonDecode(res.body) as Map<String, dynamic>;
+    final List list = (data['categories'] as List? ?? const <dynamic>[]);
+    return list.map((e) => CategoryModel.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<MovieResponse> getMoviesByCategory(int categoryId, {int page = 1}) async {
+    final res = await _client.get('/api/v1/categories/$categoryId/movies', query: {'page': page});
+    return MovieResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
+  Future<MovieResponse> getTVByCategory(int categoryId, {int page = 1}) async {
+    final res = await _client.get('/api/v1/categories/$categoryId/tv', query: {'page': page});
     return MovieResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
 }
