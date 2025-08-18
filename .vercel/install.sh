@@ -1,11 +1,14 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+set -e
 
-echo "[Vercel] Install Flutter SDK"
-if [ ! -d "flutter" ]; then
-  git clone https://github.com/flutter/flutter.git -b stable flutter
-fi
-export PATH="$(pwd)/flutter/bin:$PATH"
+echo "Installing Flutter SDK..."
+git clone https://github.com/flutter/flutter.git /usr/local/flutter
+export PATH="$PATH:/usr/local/flutter/bin"
+
+echo "Flutter version:"
 flutter --version
-flutter config --enable-web
-flutter doctor -v || true
+
+echo "Installing Flutter dependencies..."
+flutter pub get
+
+echo "Flutter installation completed!"
