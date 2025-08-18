@@ -6,6 +6,7 @@ import 'package:flutter_wasm_frontend/pages/search_page.dart';
 import 'package:flutter_wasm_frontend/pages/movie_detail_page.dart';
 import 'package:flutter_wasm_frontend/pages/login_page.dart';
 import 'package:flutter_wasm_frontend/pages/favorites_page.dart';
+import 'package:flutter_wasm_frontend/pages/settings_page.dart';
 
 void main() {
   usePathUrlStrategy();
@@ -23,7 +24,7 @@ class WasmApp extends StatelessWidget {
         GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
         GoRoute(path: '/auth', builder: (context, state) => const _SimplePage(title: 'Auth')),
         GoRoute(path: '/admin', builder: (context, state) => const _SimplePage(title: 'Admin')),
-        GoRoute(path: '/settings', builder: (context, state) => const _SimplePage(title: 'Settings')),
+        GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
         GoRoute(path: '/search', builder: (context, state) => const SearchPage()),
         GoRoute(path: '/favorites', builder: (context, state) => const _SimplePage(title: 'Favorites')),
         GoRoute(path: '/favorites', builder: (context, state) => const FavoritesPage()),
