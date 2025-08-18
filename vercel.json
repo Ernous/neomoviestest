@@ -1,0 +1,20 @@
+{
+  "framework": "other",
+  "installCommand": "bash .vercel/install.sh",
+  "buildCommand": "bash .vercel/flutter-build.sh",
+  "outputDirectory": "flutter_wasm_frontend/build/web",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+{
+  "framework": null,
+  "buildCommand": "bash .vercel/flutter-build.sh",
+  "installCommand": "bash .vercel/install.sh",
+  "outputDirectory": "flutter_wasm_frontend/build/web",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

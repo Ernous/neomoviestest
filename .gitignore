@@ -3,3 +3,9 @@ node_modules
 .env.local
 .next
 package-lock.json
+flutter/
+flutter_wasm_frontend/.dart_tool/
+flutter_wasm_frontend/.flutter-plugins*
+flutter_wasm_frontend/build/
+flutter_wasm_frontend/ios/
+flutter_wasm_frontend/android/
