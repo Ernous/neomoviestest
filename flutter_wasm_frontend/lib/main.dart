@@ -45,7 +45,8 @@ class WasmApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter WASM Frontend',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE04E39)),
+        useMaterial3: true,
       ),
       routerConfig: router,
     );

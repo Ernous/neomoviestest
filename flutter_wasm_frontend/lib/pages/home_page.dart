@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_wasm_frontend/api/api_client.dart';
 import 'package:flutter_wasm_frontend/api/neo_api.dart';
 import 'package:flutter_wasm_frontend/models/movie.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_wasm_frontend/widgets/header_bar.dart';
+import 'package:flutter_wasm_frontend/widgets/movie_card.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,7 +46,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('NeoMovies')),
+      appBar: const HeaderBar(),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _loading
@@ -61,53 +63,10 @@ class _HomePageState extends State<HomePage> {
                     itemCount: _popular.length,
                     itemBuilder: (context, index) {
                       final movie = _popular[index];
-                      return _MovieCard(movie: movie, api: _api);
+                      return MovieCard(movie: movie, api: _api);
                     },
                   ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/search'),
-        child: const Icon(Icons.search),
-      ),
     );
   }
 }
-
-class _MovieCard extends StatelessWidget {
-  const _MovieCard({required this.movie, required this.api});
-
-  final MovieModel movie;
-  final NeoApi api;
-
-  @override
-  Widget build(BuildContext context) {
-    final image = api.imageUrl(movie.posterPath);
-    return InkWell(
-      onTap: () => context.go('/movie/${movie.id}'),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: [
-            Expanded(
-              child: Image.network(
-                image.toString(),
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                movie.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_wasm_frontend/api/api_client.dart';
 import 'package:flutter_wasm_frontend/api/neo_api.dart';
 import 'package:flutter_wasm_frontend/models/movie.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_wasm_frontend/widgets/header_bar.dart';
+import 'package:flutter_wasm_frontend/widgets/movie_card.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -44,28 +45,11 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Поиск')),      
+      appBar: const HeaderBar(),      
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Фильм или сериал...',
-                      border: OutlineInputBorder(),
-                    ),
-                    onSubmitted: (_) => _search(),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(onPressed: _search, child: const Text('Найти')),
-              ],
-            ),
-            const SizedBox(height: 16),
             if (_loading) const LinearProgressIndicator(),
             if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
             const SizedBox(height: 8),
@@ -80,37 +64,19 @@ class _SearchPageState extends State<SearchPage> {
                 itemCount: _results.length,
                 itemBuilder: (context, index) {
                   final movie = _results[index];
-                  final image = _api.imageUrl(movie.posterPath);
-                  return InkWell(
-                    onTap: () => context.go('/movie/${movie.id}') ,
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Image.network(
-                              image.toString(),
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              movie.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  return MovieCard(movie: movie, api: _api);
                 },
               ),
             ),
           ],
+        ),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 68),
+        child: FloatingActionButton.extended(
+          onPressed: _search,
+          icon: const Icon(Icons.search),
+          label: const Text('Найти'),
         ),
       ),
     );
