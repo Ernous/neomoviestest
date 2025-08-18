@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:flutter_wasm_frontend/pages/home_page.dart';
+import 'package:flutter_wasm_frontend/pages/search_page.dart';
+import 'package:flutter_wasm_frontend/pages/movie_detail_page.dart';
+import 'package:flutter_wasm_frontend/pages/login_page.dart';
 
 void main() {
   usePathUrlStrategy();
@@ -14,12 +18,12 @@ class WasmApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final GoRouter router = GoRouter(
       routes: <RouteBase>[
-        GoRoute(path: '/', builder: (context, state) => const _HomePage()),
-        GoRoute(path: '/login', builder: (context, state) => const _SimplePage(title: 'Login')),
+        GoRoute(path: '/', builder: (context, state) => const HomePage()),
+        GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
         GoRoute(path: '/auth', builder: (context, state) => const _SimplePage(title: 'Auth')),
         GoRoute(path: '/admin', builder: (context, state) => const _SimplePage(title: 'Admin')),
         GoRoute(path: '/settings', builder: (context, state) => const _SimplePage(title: 'Settings')),
-        GoRoute(path: '/search', builder: (context, state) => const _SimplePage(title: 'Search')),
+        GoRoute(path: '/search', builder: (context, state) => const SearchPage()),
         GoRoute(path: '/favorites', builder: (context, state) => const _SimplePage(title: 'Favorites')),
         GoRoute(path: '/providers', builder: (context, state) => const _SimplePage(title: 'Providers')),
         GoRoute(path: '/profile', builder: (context, state) => const _SimplePage(title: 'Profile')),
@@ -27,7 +31,7 @@ class WasmApp extends StatelessWidget {
         GoRoute(path: '/terms', builder: (context, state) => const _SimplePage(title: 'Terms')),
         GoRoute(
           path: '/movie/:id',
-          builder: (context, state) => _DetailsPage(title: 'Movie', id: state.pathParameters['id'] ?? ''),
+          builder: (context, state) => MovieDetailPage(id: state.pathParameters['id'] ?? ''),
         ),
         GoRoute(
           path: '/tv/:id',
@@ -44,54 +48,6 @@ class WasmApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       routerConfig: router,
-    );
-  }
-}
-
-class _HomePage extends StatelessWidget {
-  const _HomePage();
-
-  @override
-  Widget build(BuildContext context) {
-    final List<(String, String)> links = <(String, String)>[
-      ('/login', 'Login'),
-      ('/auth', 'Auth'),
-      ('/admin', 'Admin'),
-      ('/settings', 'Settings'),
-      ('/search', 'Search'),
-      ('/favorites', 'Favorites'),
-      ('/providers', 'Providers'),
-      ('/profile', 'Profile'),
-      ('/categories', 'Categories'),
-      ('/terms', 'Terms'),
-      ('/movie/123', 'Movie: 123'),
-      ('/tv/456', 'TV: 456'),
-    ];
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 700),
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: <Widget>[
-              const Text('Flutter WASM Frontend', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: links
-                    .map((entry) => ElevatedButton(
-                          onPressed: () => context.go(entry.$1),
-                          child: Text(entry.$2),
-                        ))
-                    .toList(),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
